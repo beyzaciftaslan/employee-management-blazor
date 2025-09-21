@@ -1,0 +1,201 @@
+﻿@page "/"
+@using demo.Models
+@using demo.Services
+@implements IAsyncDisposable
+@inject IEmployeeService EmployeeService
+@rendermode InteractiveServer
+
+<PageTitle>Employee Management System</PageTitle>
+
+<h4>Employee Management System</h4>
+
+<p>
+    <a href="employees/create">Create New</a>
+</p>
+
+@if (employees == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-sm" style="width: 70%;">
+            <thead style="background-color: #f8f9fa; color: #6c757d;">
+                <tr>
+                    <th style="width: 60px;">Title</th>
+                    <th style="width: 120px;">First Name</th>
+                    <th style="width: 120px;">Last Name</th>
+                    <th style="width: 30px;">Birth Date</th>
+                    <th style="width: 150px;">Position</th>
+                    <th style="width: 30px;">Hire Date</th>
+                    <th style="width: 120px;">State</th>
+                    <th style="width: 60px;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var employee in employees)
+                {
+                    <tr>
+                        <td>@employee.Title</td>
+                        <td>@employee.FirstName</td>
+                        <td>@employee.LastName</td>
+                        <td>@employee.BirthDate.ToShortDateString()</td>
+                        <td>@employee.Position</td>
+                        <td>@employee.HireDate.ToShortDateString()</td>
+                        <td>@employee.State</td>
+                        <td class="text-center">
+                            @* <a href="javascript:void(0)" @onclick="() => OpenEditModal(employee)">Edit</a> *@
+                            <button class="btn btn-link p-0" @onclick="() => OpenEditModal(employee)">
+                                Edit
+                            </button>
+                            @* <a @onclick="() => OpenEditModal(employee)">Edit</a> *@
+                            @* <a @onclick="() => OpenEditModal(employee)" style="cursor:pointer;">Edit</a> *@
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (employees.Count == 0)
+    {
+        <div class="alert alert-info">
+            <p>No employees found. <a href="employees/create">Create the first employee</a>.</p>
+        </div>
+    }
+}
+
+<!-- Bootstrap Modal -->
+@if (showModal)
+{   
+<div class="modal fade  show d-block  "tabindex="-1" style="background-color: rgba(0,0,0,0.5);" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Employee</h5>
+                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+            </div>
+            <div class="modal-body">
+                @if (selectedEmployee != null)
+                {
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label>First Name:</label>
+                            <input class="form-control" @bind="selectedEmployee.FirstName" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label>Last Name:</label>
+                            <input class="form-control" @bind="selectedEmployee.LastName" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label>Title:</label>
+                            <input class="form-control" @bind="selectedEmployee.Title" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label>Birth Date:</label>
+                            <input type="date" class="form-control" @bind="selectedEmployee.BirthDate" @bind:format="yyyy-MM-dd" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label>Position:</label>
+                            <input class="form-control" @bind="selectedEmployee.Position" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label>Hire Date:</label>
+                            <input type="date" class="form-control" @bind="selectedEmployee.HireDate" @bind:format="yyyy-MM-dd" />
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label>Notes:</label>
+                        <textarea class="form-control" rows="3" @bind="selectedEmployee.Notes"></textarea>
+                    </div>
+                    
+                    <h6 class="mt-3 mb-2">Home Address</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label>State:</label>
+                            <select class="form-control" @bind="selectedEmployee.State">
+                                <option value="">Select State</option>
+                                <option value="California">California</option>
+                                <option value="Texas">Texas</option>
+                                <option value="Florida">Florida</option>
+                                <option value="New York">New York</option>
+                                <option value="Illinois">Illinois</option>
+                                <option value="Pennsylvania">Pennsylvania</option>
+                                <option value="Ohio">Ohio</option>
+                                <option value="Georgia">Georgia</option>
+                                <option value="North Carolina">North Carolina</option>
+                                <option value="Michigan">Michigan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label>Address:</label>
+                            <input class="form-control" @bind="selectedEmployee.HomeAddress" />
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" @onclick="SaveChanges">Save</button>
+                <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+
+@code {
+    private List<Employee>? employees;
+    private Employee? selectedEmployee;
+    private bool showModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await EmployeeService.GetAllEmployeesAsync();
+    }
+
+    private void OpenEditModal(Employee emp)
+    {
+        Console.WriteLine("Beyza");
+        selectedEmployee = new Employee
+        {
+            Id = emp.Id,
+            Title = emp.Title,
+            FirstName = emp.FirstName,
+            LastName = emp.LastName,
+            BirthDate = emp.BirthDate,
+            Position = emp.Position,
+            HireDate = emp.HireDate,
+            State = emp.State,
+            Notes = emp.Notes,
+            HomeAddress = emp.HomeAddress
+        };
+        showModal = true;
+    }
+
+    private async Task SaveChanges()
+    {
+        if (selectedEmployee != null)
+        {
+            await EmployeeService.UpdateEmployeeAsync(selectedEmployee);
+            employees = await EmployeeService.GetAllEmployeesAsync();
+        }
+        showModal = false;
+    }
+
+    private void CloseModal()
+    {
+        showModal = false;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await ValueTask.CompletedTask;
+    }
+}
