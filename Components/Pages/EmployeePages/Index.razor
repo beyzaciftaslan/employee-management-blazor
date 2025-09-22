@@ -3,6 +3,7 @@
 @using demo.Services
 @implements IAsyncDisposable
 @inject IEmployeeService EmployeeService
+@inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
 <PageTitle>Employee Management System</PageTitle>
@@ -45,13 +46,9 @@ else
                         <td>@employee.HireDate.ToShortDateString()</td>
                         <td>@employee.State</td>
                         <td class="text-center">
-                            @* <a href="javascript:void(0)" @onclick="() => OpenEditModal(employee)">Edit</a> *@
-                            <button class="btn btn-link p-0" @onclick="() => OpenEditModal(employee)">
+                            <a href="#" @onclick="() => OpenEditModal(employee)">
                                 Edit
-                            </button>
-                            @* <a @onclick="() => OpenEditModal(employee)">Edit</a> *@
-                            @* <a @onclick="() => OpenEditModal(employee)" style="cursor:pointer;">Edit</a> *@
-
+                            </a>
                         </td>
                     </tr>
                 }
@@ -71,7 +68,7 @@ else
 @if (showModal)
 {   
 <div class="modal fade  show d-block  "tabindex="-1" style="background-color: rgba(0,0,0,0.5);" role="dialog">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Edit Employee</h5>
@@ -141,6 +138,7 @@ else
                 }
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-danger me-auto" @onclick="DeleteEmployee">Delete</button>
                 <button type="button" class="btn btn-primary" @onclick="SaveChanges">Save</button>
                 <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancel</button>
             </div>
@@ -187,6 +185,21 @@ else
             employees = await EmployeeService.GetAllEmployeesAsync();
         }
         showModal = false;
+    }
+
+    private async Task DeleteEmployee()
+    {
+        if (selectedEmployee != null)
+        {
+            bool confirmDelete = await JSRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete {selectedEmployee.FirstName} {selectedEmployee.LastName}?");
+            
+            if (confirmDelete)
+            {
+                await EmployeeService.DeleteEmployeeAsync(selectedEmployee);
+                employees = await EmployeeService.GetAllEmployeesAsync();
+                showModal = false;
+            }
+        }
     }
 
     private void CloseModal()
