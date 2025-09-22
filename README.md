@@ -2,10 +2,10 @@
 
 Bu proje, ASP.NET Core 8.0 ve Blazor Server kullanılarak geliştirilmiş bir çalışan yönetim sistemidir. Entity Framework Core ile SQL Server veritabanı entegrasyonu sağlar.
 
-## 🎬 Demo Video
+##  Ekran Kaydı
 
 <!-- Videoyu yükledikten sonra bu linki güncelleyin -->
-https://github.com/beyzaciftaslan/employee-management-blazor/issues/1#issue-3438790028
+https://github.com/user-attachments/assets/e8e36602-062e-4cce-9a30-dd1a6f54a22e
 
 ## 📸 Proje Görselleri
 
