@@ -112,7 +112,7 @@ Employee modeli aşağıdaki özellikleri içerir:
 - **State**: Eyalet
 - **Notes**: Notlar (opsiyonel)
 - **HomeAddress**: Ev adresi (opsiyonel)
-
+<!-- 
 ### API Endpoints
 
 Çalışan yönetimi için aşağıdaki sayfalar mevcuttur:
@@ -121,7 +121,7 @@ Employee modeli aşağıdaki özellikleri içerir:
 - `/employees/create` - Yeni çalışan ekleme
 - `/employees/edit/{id}` - Çalışan düzenleme
 - `/employees/details/{id}` - Çalışan detayları
-- `/employees/delete/{id}` - Çalışan silme
+- `/employees/delete/{id}` - Çalışan silme -->
 
 ## 🔧 Yapılandırma
 
