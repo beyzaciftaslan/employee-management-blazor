@@ -35,7 +35,6 @@ https://github.com/user-attachments/assets/e8e36602-062e-4cce-9a30-dd1a6f54a22e
 - **UI Framework**: Blazor Server
 - **ORM**: Entity Framework Core 9.0.9
 - **Veritabanı**: SQL Server
-- **UI Components**: MudBlazor 8.12.0
 - **Data Grid**: QuickGrid with EntityFramework Adapter
 
 ## 📋 Önkoşullar
